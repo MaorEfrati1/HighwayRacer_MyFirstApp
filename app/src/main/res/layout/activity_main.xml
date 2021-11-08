@@ -61,7 +61,7 @@
             android:layout_weight="1" />
 
         <ImageView
-            android:id="@+id/ImageView_Gameplay_BlueCar1"
+            android:id="@+id/ImageView_Gameplay_BlueCar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -69,12 +69,12 @@
             app:srcCompat="@drawable/blue_car" />
 
         <ImageView
-            android:id="@+id/ImageView_Gameplay_BlueCar2"
+            android:id="@+id/ImageView_Gameplay_Red_car"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:rotation="180"
-            app:srcCompat="@drawable/blue_car" />
+            android:rotation="90"
+            app:srcCompat="@drawable/red_car" />
 
 
 
@@ -118,7 +118,7 @@
         android:id="@+id/Main_LinearLay_RightLeftBtn"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="15"
+        android:layout_weight="13"
         android:orientation="horizontal">
 
 
