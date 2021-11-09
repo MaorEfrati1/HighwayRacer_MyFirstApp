@@ -8,14 +8,14 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <include layout="@layout/toolbar" />
 
     <LinearLayout
         android:id="@+id/Main_LinearLay_Abilities"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="10"
+        android:layout_weight="8"
         android:orientation="horizontal">
-
 
 
         <ImageView
@@ -23,13 +23,16 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="10"
-            app:srcCompat="@drawable/heart" />
+            android:contentDescription="@string/Heart1"
+            app:srcCompat="@drawable/heart"
+            tools:ignore="NestedWeights" />
 
         <ImageView
             android:id="@+id/ImageView_Abilities_Heart2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="10"
+            android:contentDescription="@string/Heart2"
             app:srcCompat="@drawable/heart" />
 
         <ImageView
@@ -37,13 +40,19 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="10"
+            android:contentDescription="@string/Heart3"
             app:srcCompat="@drawable/heart" />
 
-        <View
-            android:id="@+id/View_Abilities"
+
+        <ImageView
+            android:id="@+id/ImageView_Abilities_GameOver"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="70" />
+            android:layout_height="match_parent"
+
+            android:layout_weight="70"
+            android:contentDescription="@string/GameOver"
+            app:srcCompat="@drawable/game_over" />
+
     </LinearLayout>
 
 
@@ -58,27 +67,26 @@
             android:id="@+id/View_GameplayView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            tools:ignore="NestedWeights" />
 
         <ImageView
             android:id="@+id/ImageView_Gameplay_BlueCar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:contentDescription="@string/BlueCar"
             android:rotation="180"
             app:srcCompat="@drawable/blue_car" />
 
         <ImageView
-            android:id="@+id/ImageView_Gameplay_Red_car"
+            android:id="@+id/ImageView_Gameplay_RedCar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:contentDescription="@string/RedCar"
             android:rotation="90"
             app:srcCompat="@drawable/red_car" />
-
-
-
-
 
 
     </LinearLayout>
@@ -94,15 +102,17 @@
             android:id="@+id/View_RaceCarMovement_View1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            tools:ignore="NestedWeights" />
 
         <ImageView
             android:id="@+id/ImageView_RaceCarMovement_RaceCar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:rotation="-90"
             android:layout_gravity="bottom"
             android:layout_weight="1"
+            android:contentDescription="@string/RaceCar"
+            android:rotation="-90"
             app:srcCompat="@drawable/race_car" />
 
         <View
@@ -123,28 +133,32 @@
 
 
         <ImageButton
-            android:id="@+id/ImageButton_RightLeftBtn_Left"
-            android:layout_width="wrap_content"
+            android:id="@+id/ImageButton_RightLeftBtn_LeftArrow"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:rotation="180"
             android:background="?android:attr/selectableItemBackground"
-            app:srcCompat="@drawable/arrow" />
+            android:contentDescription="@string/LeftArrow"
+            android:rotation="180"
+            app:srcCompat="@drawable/arrow"
+            tools:ignore="NestedWeights" />
+
         <View
             android:id="@+id/View_RightLeftBtn_View2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/ImageButton_RightLeftBtn_Right"
-            android:layout_width="wrap_content"
+            android:id="@+id/ImageButton_RightLeftBtn_RightArrow"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/RightArrow"
             app:srcCompat="@drawable/arrow" />
-    </LinearLayout>
 
+    </LinearLayout>
 
 
 </LinearLayout>

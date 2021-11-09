@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">HW1</string>
+    <string name="app_name">Highway Racer</string>
+    <string name="Heart1">Heart</string>
+    <string name="Heart2">Heart2</string>
+    <string name="Heart3">Heart3</string>
+    <string name="BlueCar">BlueCar</string>
+    <string name="RedCar">RedCar</string>
+    <string name="RaceCar">RaceCar</string>
+    <string name="LeftArrow">LeftArrow</string>
+    <string name="RightArrow">RightArrow</string>
+    <string name="ToolBarExitToMenu">ToolBarExitToMenu</string>
+    <string name="GameOver">GameOver</string>
+    <string name="ToolBarGameRestart">ToolBarGameRestart</string>
+    <string name="ToolBarGamePause">ToolBarGamePause</string>
+
 </resources>

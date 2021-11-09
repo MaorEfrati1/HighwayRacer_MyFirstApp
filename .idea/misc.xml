@@ -4,7 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/HW1/app/src/main/res/drawable/ic_launcher_background.xml" value="0.26510416666666664" />
-        <entry key="..\:/Users/HW1/app/src/main/res/layout/activity_main.xml" value="0.21" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/toolbar.xml" value="0.33" />
+        <entry key="..\:/Users/HW1/app/src/main/res/menu/main.xml" value="0.2609375" />
+        <entry key="..\:/Users/HW1/app/src/main/res/menu/menu.xml" value="0.2609375" />
+        <entry key="..\:/Users/HW1/app/src/main/res/mipmap-anydpi-v26/highway_icon_launcher.xml" value="0.3828125" />
+        <entry key="..\:/Users/HW1/app/src/main/res/mipmap-anydpi-v26/highway_icon_launcher_round.xml" value="0.221875" />
+        <entry key="..\:/Users/HW1/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.221875" />
+        <entry key="..\:/Users/HW1/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3828125" />
       </map>
     </option>
   </component>
