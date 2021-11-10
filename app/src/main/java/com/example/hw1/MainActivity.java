@@ -3,6 +3,7 @@ package com.example.hw1;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -10,6 +11,7 @@ import android.os.Vibrator;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,16 +28,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         //Toolbar
-        setContentView(R.layout.activity_main);
         ImageView menu = findViewById(R.id.Main_Textview_ToolBarExitToMenu);
         ImageView gameRestart = findViewById(R.id.Main_Textview_ToolBarGameRestart);
         ImageView gamePause = findViewById(R.id.Main_Textview_ToolBarGamePause);
-
-        //Game over
-        ImageView gameOver = findViewById(R.id.ImageView_Abilities_GameOver);
-        gameOver.setImageResource(android.R.color.transparent);
 
         //hearts
         ImageView heart3 = findViewById(R.id.ImageView_Abilities_Heart3);
@@ -59,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
         //restart
         gameRestart.setOnClickListener(v -> {
             timer.cancel();
-            gameOver.setImageResource(android.R.color.transparent);
-
             heartCount = 3;
             heart1.setImageResource(R.drawable.heart);
             heart2.setImageResource(R.drawable.heart);
@@ -72,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             redCar.setX(0);
             blueCar.setX(((float) 1 * getScreenWidth() / 3));
 
-            gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, gameOver);
+            gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar);
         });
 
         //Pause
@@ -83,11 +79,24 @@ public class MainActivity extends AppCompatActivity {
 
 
         //GamePlay Thread
-        gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, gameOver);
+        gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar);
 
         //race_Car movement
         //Right arrow button
         ImageView Right_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_RightArrow);
+
+        //Left arrow button
+        ImageView Left_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_LeftArrow);
+
+        //Language support
+        String language = Locale.getDefault().getDisplayLanguage();
+        if (language.equals("English")) {
+            redCar.setX((float) (-2 * getScreenWidth() / 3));
+            Left_Arrow.setX((float) (2 * getScreenWidth() / 3));
+            Right_Arrow.setX((float) (-2 * getScreenWidth() / 3));
+
+
+        }
 
         Right_Arrow.setOnClickListener(v -> {
 
@@ -101,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Left arrow button
-        ImageView Left_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_LeftArrow);
-
         Left_Arrow.setOnClickListener(v -> {
 
             if (raceCarPos == 0) {
@@ -116,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void gamePlay(ImageView blueCar, ImageView raceCar, ImageView heart1, ImageView heart2, ImageView heart3, ImageView redCar, ImageView gameOver) {
+    private void gamePlay(ImageView blueCar, ImageView raceCar, ImageView heart1, ImageView heart2, ImageView heart3, ImageView redCar) {
         timer = new Timer();
 
         AtomicInteger randNewLaneBlueCar = new AtomicInteger();
@@ -152,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                         //crashed
                         int raceCarPos1 = (int) (raceCar.getX() / 360);
                         if (randNewLaneRedCar.get() == raceCarPos1) {
-                            Crashed(timer, heart1, heart2, heart3, gameOver);
+                            Crashed(timer, heart1, heart2, heart3);
                         }
 
                         // red car new ride
@@ -167,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                         //is crashed?
                         int raceCarPos1 = (int) (raceCar.getX() / 360);
                         if (randNewLaneBlueCar.get() == raceCarPos1) {
-                            Crashed(timer, heart1, heart2, heart3, gameOver);
+                            Crashed(timer, heart1, heart2, heart3);
                         }
 
                         // blue car new ride
@@ -203,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void Crashed(Timer timer, ImageView heart1, ImageView heart2, ImageView heart3, ImageView gameOver) {
+    private void Crashed(Timer timer, ImageView heart1, ImageView heart2, ImageView heart3) {
         //is crashed?
         if (heartCount == 3) {
             heart3.setImageResource(android.R.color.transparent);
@@ -218,8 +225,7 @@ public class MainActivity extends AppCompatActivity {
             vibrate(500);
         } else {
             //game over
-            gameOver.setImageResource(R.drawable.game_over);
-            toast("Game Over !");
+            goToGameOverScreen();
             vibrate(1000);
             timer.cancel();
 
@@ -228,6 +234,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static int getScreenWidth() {
         return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    public void goToGameOverScreen() {
+        Intent intentLoadGameOverScreen = new Intent(MainActivity.this, GameOverScreen.class);
+        startActivity(intentLoadGameOverScreen);
     }
 
 }

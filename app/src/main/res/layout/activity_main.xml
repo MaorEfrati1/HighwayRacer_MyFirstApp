@@ -22,7 +22,7 @@
             android:id="@+id/ImageView_Abilities_Heart1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="10"
+            android:layout_weight="13"
             android:contentDescription="@string/Heart1"
             app:srcCompat="@drawable/heart"
             tools:ignore="NestedWeights" />
@@ -31,27 +31,30 @@
             android:id="@+id/ImageView_Abilities_Heart2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="10"
+            android:layout_weight="13"
             android:contentDescription="@string/Heart2"
             app:srcCompat="@drawable/heart" />
+
 
         <ImageView
             android:id="@+id/ImageView_Abilities_Heart3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="10"
+            android:layout_weight="13"
             android:contentDescription="@string/Heart3"
             app:srcCompat="@drawable/heart" />
 
-
-        <ImageView
-            android:id="@+id/ImageView_Abilities_GameOver"
+        <View
+            android:id="@+id/view"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="61" />
 
-            android:layout_weight="70"
-            android:contentDescription="@string/GameOver"
-            app:srcCompat="@drawable/game_over" />
+        <!--        <view-->
+        <!--            android:id="@+id/View_Abilities"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:layout_weight="70"/>-->
 
     </LinearLayout>
 

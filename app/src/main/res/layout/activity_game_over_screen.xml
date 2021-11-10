@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GameOverScreen"
+    android:orientation="vertical"
+    android:background="@color/black">
+
+    <include layout="@layout/toolbar" />
+
+    <ImageView
+        android:id="@+id/ImageView_Abilities_GameOver"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="25"
+        android:contentDescription="@string/GameOver"
+        app:srcCompat="@drawable/game_over" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/GameOverScreen_Gif_GameOverGif"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="75"
+        android:src="@drawable/game_over_gif"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="206dp" />
+
+</LinearLayout>
