@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Highway Racer</string>
+    <string name="app_name">HighWay Racer</string>
     <string name="Heart1">Heart</string>
     <string name="Heart2">Heart2</string>
     <string name="Heart3">Heart3</string>
@@ -11,6 +11,10 @@
     <string name="ToolBarExitToMenu">ToolBarExitToMenu</string>
     <string name="GameOver">GameOver</string>
     <string name="ToolBarGameRestart">ToolBarGameRestart</string>
-    <string name="ToolBarGamePause">ToolBarGamePause</string>
+    <string name="ToolBarGamePause">CountDownTimer</string>
+    <string name="CountdownTimer">3</string>
+    <string name="Easy">Easy</string>
+    <string name="medium">medium</string>
+    <string name="Hard">Hard</string>
 
 </resources>

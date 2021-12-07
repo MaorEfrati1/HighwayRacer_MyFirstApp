@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/road_background"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <include layout="@layout/toolbar" />
+
+    <LinearLayout
+        android:id="@+id/Main_LinearLay_Abilities"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/ImageView_Abilities_Heart1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:contentDescription="@string/Heart1"
+            app:srcCompat="@drawable/heart"
+            tools:ignore="NestedWeights" />
+
+        <ImageView
+            android:id="@+id/ImageView_Abilities_Heart2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:contentDescription="@string/Heart2"
+            app:srcCompat="@drawable/heart" />
+
+
+        <ImageView
+            android:id="@+id/ImageView_Abilities_Heart3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:contentDescription="@string/Heart3"
+            app:srcCompat="@drawable/heart" />
+
+        <TextView
+            android:id="@+id/textView_Coin"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="20"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textView_KM"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_margin="5dp"
+            android:layout_weight="20"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/Main_LinearLay_Gameplay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="75"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/ImageView_Gameplay_BlueCar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:contentDescription="@string/BlueCar"
+            android:rotation="180"
+            app:srcCompat="@drawable/blue_car"
+            tools:ignore="NestedWeights" />
+
+        <TextView
+            android:id="@+id/textView_CountDownTimer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.9"
+            android:gravity="center"
+            android:text="@string/CountdownTimer"
+            android:textColor="@color/white"
+            android:textSize="150sp" />
+
+            <ImageView
+                android:id="@+id/ImageView_Gameplay_coin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:contentDescription="@string/BlueCar"
+                android:rotation="180"
+                app:srcCompat="@drawable/coin" />
+
+
+
+
+        <ImageView
+            android:id="@+id/ImageView_Gameplay_RedCar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:contentDescription="@string/RedCar"
+            android:rotation="90"
+            app:srcCompat="@drawable/red_car" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Main_LinearLay_RaceCarMovement"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="12"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/View_RaceCarMovement_View1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:ignore="NestedWeights" />
+
+        <ImageView
+            android:id="@+id/ImageView_RaceCarMovement_RaceCar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:contentDescription="@string/RaceCar"
+            android:rotation="-90"
+            app:srcCompat="@drawable/race_car" />
+
+        <View
+            android:id="@+id/View_RaceCarMovement_View2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/Main_LinearLay_RightLeftBtn"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="13"
+        android:orientation="horizontal">
+
+
+        <ImageButton
+            android:id="@+id/ImageButton_RightLeftBtn_LeftArrow"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/LeftArrow"
+            android:rotation="180"
+            app:srcCompat="@drawable/arrow"
+            tools:ignore="NestedWeights" />
+
+        <View
+            android:id="@+id/View_RightLeftBtn_View2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/ImageButton_RightLeftBtn_RightArrow"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/RightArrow"
+            app:srcCompat="@drawable/arrow" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

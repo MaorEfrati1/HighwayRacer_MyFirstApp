@@ -15,8 +15,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HW1">
         <activity
+            android:name=".ThreeLaneRoad"
+
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FiveLaneRoad"
+
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".GameOverScreen"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
