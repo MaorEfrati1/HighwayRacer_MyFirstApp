@@ -1,6 +1,8 @@
 package com.example.hw1;
 
 import static com.example.hw1.MainActivity.getGameMode;
+import static com.example.hw1.MainActivity.getIsSensorMode;
+import static com.example.hw1.MainActivity.getIsSensorSpeedMode;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,11 +10,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,8 +48,10 @@ public class FiveLaneRoad extends AppCompatActivity {
     private float KmCount = 0;
 
     //coin
-    private AtomicBoolean addCoins;
+    private ImageView coin;
+
     private int coinsCounter = 0;
+    private AtomicBoolean addCoins;
     private int countCarFinishLane = 0;
     private int coinCrashPos = 1440;
     private int coinSpeed = 60;
@@ -58,6 +67,11 @@ public class FiveLaneRoad extends AppCompatActivity {
     private TextView countTimer;
 
     //cars setting
+    private ImageView raceCar;
+    private ImageView blueCar;
+    private ImageView redCar;
+    private ImageView yellowCar;
+
     private float redCarGetYAfterPause;
     private float blueCarGetYAfterPause;
     private float yellowCarGetYAfterPause;
@@ -73,15 +87,121 @@ public class FiveLaneRoad extends AppCompatActivity {
     private int yellowCarSpeed = 90;
     private int crashPos = 1380;
     private int yellowCrashPos = 1440;
-    private final int blueCarStartPos = 0;
+    private int blueCarStartPos = 0;
     private int redCarStartPos = -120;
     private int yellowCarStartPos = -180;
 
+    //Sensor Mode
+    private final boolean isSensorMode = getIsSensorMode();
+    private SensorManager sensorManager;
+    private Sensor sensor;
+    private boolean sensorMovement = false;
+    private boolean checkUpDown = false;
+
+    //Sensor Speed Mode
+    private final boolean isSensorSpeedMode = getIsSensorSpeedMode();
+    private boolean sensorSpeed = true;
+
+
+    private final SensorEventListener accSensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+
+            if (Math.abs(x) > Math.abs(y)) {
+
+                if (sensorMovement) {
+                    //Tilt Right
+                    if (x < 0) {
+                        if (raceCar.getX() <= screenWidth * 3) {
+                            raceCar.setX(raceCar.getX() + screenWidth);
+                        }
+                    }
+                    //Tilt Left
+                    if (x > 0) {
+                        if (raceCar.getX() >= 216) {
+                            raceCar.setX(raceCar.getX() - screenWidth);
+                        }
+                    }
+                }
+            } else {
+                if (isSensorSpeedMode) {
+                    if (sensorSpeed) {
+
+                        //Tilt Up
+                        if (y < -3) {
+
+                            carsSpeed = 90;
+                            yellowCarSpeed = 120;
+                            coinSpeed = 90;
+
+                            crashPos = 1350;
+                            yellowCrashPos = 1440;
+                            coinCrashPos = 1440;
+                            blueCarStartPos = 0;
+                            redCarStartPos = -180;
+                            yellowCarStartPos = -240;
+                            coinStartPos = -180;
+
+
+                            if (checkUpDown) {
+                                checkUpDown = false;
+
+                                redCar.setY(redCarStartPos);
+                                blueCar.setY(blueCarStartPos);
+                                yellowCar.setY(yellowCarStartPos);
+
+                                coin.setY(coinStartPos);
+                            }
+                        }
+                        //Tilt Down
+                        if (y > 3) {
+                            carsSpeed = 30;
+                            coinSpeed = 30;
+
+                            yellowCarSpeed = 60;
+                            crashPos = 1380;
+                            yellowCrashPos = 1440;
+                            blueCarStartPos = 0;
+                            redCarStartPos = -120;
+                            yellowCarStartPos = -180;
+
+                            checkUpDown = true;
+
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isSensorMode) {
+            sensorManager.registerListener(accSensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //unregister Sensor listener
+        if (isSensorMode) {
+            sensorManager.unregisterListener(accSensorEventListener);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_five_lane_road);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //Toolbar
         ImageView menu = findViewById(R.id.Main_Textview_ToolBarExitToMenu);
@@ -97,12 +217,18 @@ public class FiveLaneRoad extends AppCompatActivity {
         ImageView heart1 = findViewById(R.id.ImageView_Abilities_Heart1);
 
         //Obstacles
-        ImageView blueCar = findViewById(R.id.ImageView_Gameplay_BlueCar);
-        ImageView redCar = findViewById(R.id.ImageView_Gameplay_RedCar);
-        ImageView yellowCar = findViewById(R.id.ImageView_Gameplay_yellowCar);
+        blueCar = findViewById(R.id.ImageView_Gameplay_BlueCar);
+        redCar = findViewById(R.id.ImageView_Gameplay_RedCar);
+        yellowCar = findViewById(R.id.ImageView_Gameplay_yellowCar);
 
         //Race car
-        ImageView raceCar = findViewById(R.id.ImageView_RaceCarMovement_RaceCar);
+        raceCar = findViewById(R.id.ImageView_RaceCarMovement_RaceCar);
+
+        //Right arrow button
+        ImageView Right_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_RightArrow);
+
+        //Left arrow button
+        ImageView Left_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_LeftArrow);
 
         //Timer
         countTimer = findViewById(R.id.textView_CountDownTimer);
@@ -115,7 +241,7 @@ public class FiveLaneRoad extends AppCompatActivity {
 
         //coin
         TextView coins = findViewById(R.id.textView_Coin);
-        ImageView coin = findViewById(R.id.ImageView_Gameplay_coin);
+        coin = findViewById(R.id.ImageView_Gameplay_coin);
         coin.setImageResource(android.R.color.transparent);
         coin.setX(coin.getX());
 
@@ -125,8 +251,19 @@ public class FiveLaneRoad extends AppCompatActivity {
         //KM set text
         KmCount(Km);
 
+        //SensorsMode
+        if (isSensorMode) {
+            Left_Arrow.setImageResource(android.R.color.transparent);
+            Right_Arrow.setImageResource(android.R.color.transparent);
+            //if (isSensorExists(sensor.TYPE_ACCELEROMETER)){
+            initSensor();
+            //}
+        }
+
+
         //setup for hard mode
         if (mode == 3) {
+            sensorSpeed = false;
             carsSpeed = 90;
             yellowCarSpeed = 120;
             coinSpeed = 90;
@@ -147,6 +284,10 @@ public class FiveLaneRoad extends AppCompatActivity {
         gameRestart.setOnClickListener(v -> {
             //Disable arrows
             ClickArrows = false;
+
+            //Disable sensor
+            sensorMovement = false;
+            checkUpDown = false;
 
             if (timeLeft == 0) {
                 //count down timer
@@ -191,6 +332,9 @@ public class FiveLaneRoad extends AppCompatActivity {
             //Disable arrows
             ClickArrows = false;
 
+            //Disable sensor
+            sensorMovement = false;
+
             if (timeLeft == 0) {
                 if (!onPause) {
                     onPause = true;
@@ -221,14 +365,6 @@ public class FiveLaneRoad extends AppCompatActivity {
         //GamePlay Thread
         gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, yellowCar, Km, coin, coins);
 
-        //race Car movement
-
-        //Right arrow button
-        ImageView Right_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_RightArrow);
-
-        //Left arrow button
-        ImageView Left_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_LeftArrow);
-
         //Language support
         String language = Locale.getDefault().getDisplayLanguage();
         if (language.equals("English")) {
@@ -242,7 +378,6 @@ public class FiveLaneRoad extends AppCompatActivity {
 
         Right_Arrow.setOnClickListener(v -> {
             if (ClickArrows) {
-
                 if (raceCarPos == 1) {
                     raceCar.setX((0));
                     raceCarPos = 0;
@@ -262,7 +397,6 @@ public class FiveLaneRoad extends AppCompatActivity {
         //Left arrow button
         Left_Arrow.setOnClickListener(v -> {
             if (ClickArrows) {
-
                 if (raceCarPos == 0) {
                     raceCar.setX((float) (getScreenWidth() / laneRoad));
                     raceCarPos = 1;
@@ -302,8 +436,13 @@ public class FiveLaneRoad extends AppCompatActivity {
                 runOnUiThread(() -> {
                     if (!onPause) {
                         //activate arrows
-                        ClickArrows = true;
-
+                        if (isSensorMode) {
+                            ClickArrows = false;
+                            sensorMovement = true;
+                            checkUpDown = true;
+                        } else {
+                            ClickArrows = true;
+                        }
                         //timer reset
                         countTimer.setText("");
                         timeLeft = 0;
@@ -376,7 +515,7 @@ public class FiveLaneRoad extends AppCompatActivity {
     private void addCoin(ImageView redCar, TextView coins) {
         coins.setText("  Coins : " + coinsCounter);
         int getRedCarPosFinishLane = crashPos - 120;
-        if (mode == 3) {
+        if (mode == 3 || checkUpDown) {
             getRedCarPosFinishLane = crashPos - 180;
         }
         if (redCar.getY() == getRedCarPosFinishLane) {
@@ -655,5 +794,14 @@ public class FiveLaneRoad extends AppCompatActivity {
 
         countTimer.setText(timerLeftText);
     }
+
+    private void initSensor() {
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+
+//    public boolean isSensorExists(int sensorType) {
+//        return (sensorManager.getDefaultSensor(sensorType) != null);
+//    }
 
 }

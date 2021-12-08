@@ -1,16 +1,24 @@
 package com.example.hw1;
 
+import static com.example.hw1.MainActivity.getIsSensorMode;
+import static com.example.hw1.MainActivity.getIsSensorSpeedMode;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,47 +30,158 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreeLaneRoad extends AppCompatActivity {
+
+    //game setting
     private final int laneRoad = 3;
     private final int screenWidth = 360;
+    private Timer timer;
+    private static final int DELAY = 70;
+    private boolean onPause = false;
+    private boolean ClickArrows = false;
 
+
+    //hearts
     private int heartCount = 3;
+
+    //KM
     private float KmCount = 0;
+
+    //coin
+    private ImageView coin;
+
+    private int coinsCounter = 0;
+    private AtomicBoolean addCoins;
     private int coinCrashPos = 1320;
     private int coinSpeed = 60;
-    private AtomicBoolean addCoins;
-    private int coinsCounter = 0;
-    private int countCarFinishLane = 0;
-    private int raceCarPos = 1;
-    private static final int DELAY = 70;
-    private final int crashPos = 1200;
-    private final int redCarStartPos = -240;
-    private final int blueCarStartPos = -120;
-    private Timer timer;
+    private float coinGetXAfterPause;
+    private float coinGetYAfterPause;
+    private boolean coinAddAfterPause;
+    private int coinStartPos = -240;
 
+
+    //CountDown Timer
     private CountDownTimer countDownTimer;
     private long timeLeft = 4000;
     private boolean timerRunning;
     private TextView countTimer;
 
-    private boolean onPause = false;
-    private boolean ClickArrows = false;
 
+    //cars setting
+    private ImageView raceCar;
+    private ImageView redCar;
+    private ImageView blueCar;
+
+    private int carsSpeed = 60;
     private float redCarGetYAfterPause;
     private float blueCarGetYAfterPause;
-    private float coinGetYAfterPause;
-
+    private int countCarFinishLane = 0;
+    private int raceCarPos = 1;
+    private int crashPos = 1200;
+    private int redCarStartPos = -240;
+    private int blueCarStartPos = -120;
     private float redCarGetXAfterPause;
     private float blueCarGetXAfterPause;
     private float raceCarGetXAfterPause;
-    private float coinGetXAfterPause;
 
-    private boolean coinAddAfterPause;
 
+    //Sensor Mode
+    private final boolean isSensorMode = getIsSensorMode();
+    private SensorManager sensorManager;
+    private Sensor sensor;
+    private boolean sensorMovement = false;
+    private boolean checkUpDown = false;
+
+    //Sensor Speed Mode
+    private final boolean isSensorSpeedMode = getIsSensorSpeedMode();
+
+    private final SensorEventListener accSensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+
+            if (Math.abs(x) > Math.abs(y)) {
+                if (sensorMovement) {
+
+                    //Tilt Right
+                    if (x < 0) {
+                        if (raceCar.getX() <= screenWidth) {
+                            raceCar.setX(raceCar.getX() + screenWidth);
+                        }
+                    }
+                    //Tilt Left
+                    if (x > 0) {
+                        if (raceCar.getX() >= screenWidth) {
+                            raceCar.setX(raceCar.getX() - screenWidth);
+                        }
+                    }
+                }
+            } else {
+                if (isSensorSpeedMode) {
+
+                    //Tilt Up
+                    if (y < -3) {
+                        carsSpeed = 90;
+                        coinSpeed = 90;
+
+                        crashPos = 1260;
+                        blueCarStartPos = 0;
+                        coinCrashPos = 1350;
+
+                        redCarStartPos = -180;
+                        coinStartPos = -180;
+
+                        if (checkUpDown) {
+                            checkUpDown = false;
+                            redCar.setY(redCarStartPos);
+                            blueCar.setY(blueCarStartPos);
+
+                            coin.setY(coinStartPos);
+                        }
+                    }
+                    //Tilt Down
+                    if (y > 3) {
+                        carsSpeed = 30;
+                        coinSpeed = 30;
+
+                        crashPos = 1200;
+                        blueCarStartPos = 0;
+                        redCarStartPos = -120;
+
+                        checkUpDown = true;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isSensorMode) {
+            sensorManager.registerListener(accSensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //unregister Sensor listener
+        if (isSensorMode) {
+            sensorManager.unregisterListener(accSensorEventListener);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_three_lane_road);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         //Toolbar
         ImageView menu = findViewById(R.id.Main_Textview_ToolBarExitToMenu);
         ImageView gameRestart = findViewById(R.id.Main_Textview_ToolBarGameRestart);
@@ -73,7 +192,7 @@ public class ThreeLaneRoad extends AppCompatActivity {
 
         //coin
         TextView coins = findViewById(R.id.textView_Coin);
-        ImageView coin = findViewById(R.id.ImageView_Gameplay_coin);
+        coin = findViewById(R.id.ImageView_Gameplay_coin);
         coin.setImageResource(android.R.color.transparent);
         coin.setX(coin.getX() + 100);
 
@@ -82,16 +201,22 @@ public class ThreeLaneRoad extends AppCompatActivity {
         ImageView heart2 = findViewById(R.id.ImageView_Abilities_Heart2);
         ImageView heart1 = findViewById(R.id.ImageView_Abilities_Heart1);
 
+        //Obstacles
+        blueCar = findViewById(R.id.ImageView_Gameplay_BlueCar);
+        redCar = findViewById(R.id.ImageView_Gameplay_RedCar);
+
+        //Race car
+        raceCar = findViewById(R.id.ImageView_RaceCarMovement_RaceCar);
+
+        //Right arrow button
+        ImageView Right_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_RightArrow);
+
+        //Left arrow button
+        ImageView Left_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_LeftArrow);
+
         //Timer
         countTimer = findViewById(R.id.textView_CountDownTimer);
         countTimer.setX(countTimer.getX() - 80);
-
-        //Obstacles
-        ImageView blueCar = findViewById(R.id.ImageView_Gameplay_BlueCar);
-        ImageView redCar = findViewById(R.id.ImageView_Gameplay_RedCar);
-
-        //Race car
-        ImageView raceCar = findViewById(R.id.ImageView_RaceCarMovement_RaceCar);
 
         //Load "start engine" sound
         final MediaPlayer carStartEngine = MediaPlayer.create(this, R.raw.car_start_engine);
@@ -108,15 +233,27 @@ public class ThreeLaneRoad extends AppCompatActivity {
         //Exit To Menu
         menu.setOnClickListener(v -> goToMainScreen());
 
+        //SensorsMode
+        if (isSensorMode) {
+            Left_Arrow.setImageResource(android.R.color.transparent);
+            Right_Arrow.setImageResource(android.R.color.transparent);
+            //if (isSensorExists(sensor.TYPE_ACCELEROMETER)){
+            initSensor();
+            //}
+        }
+
         //restart
         gameRestart.setOnClickListener(v -> {
             //Disable arrows
             ClickArrows = false;
 
+            //Disable sensor
+            sensorMovement = false;
+            checkUpDown = false;
+
             if (timeLeft == 0) {
                 //count down timer
                 timerReset(carStartEngine);
-
 
                 timer.cancel();
                 onPause = false;
@@ -155,6 +292,9 @@ public class ThreeLaneRoad extends AppCompatActivity {
             //Disable arrows
             ClickArrows = false;
 
+            //Disable sensor
+            sensorMovement = false;
+
             if (timeLeft == 0) {
                 if (!onPause) {
                     onPause = true;
@@ -184,13 +324,6 @@ public class ThreeLaneRoad extends AppCompatActivity {
 
         //GamePlay Thread
         gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, Km, coin, coins);
-
-        //race_Car movement
-        //Right arrow button
-        ImageView Right_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_RightArrow);
-
-        //Left arrow button
-        ImageView Left_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_LeftArrow);
 
         //Language support
         String language = Locale.getDefault().getDisplayLanguage();
@@ -250,7 +383,13 @@ public class ThreeLaneRoad extends AppCompatActivity {
                     if (!onPause) {
 
                         //activate arrows
-                        ClickArrows = true;
+                        if (isSensorMode) {
+                            ClickArrows = false;
+                            sensorMovement = true;
+                            checkUpDown = true;
+                        } else {
+                            ClickArrows = true;
+                        }
 
                         //timer reset
                         countTimer.setText("");
@@ -314,8 +453,11 @@ public class ThreeLaneRoad extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void addCoin(ImageView redCar, TextView coins) {
         coins.setText("  Coins : " + coinsCounter);
-
-        if (redCar.getY() == crashPos - 120) {
+        int getRedCarPosFinishLane = crashPos - 120;
+        if (checkUpDown) {
+            getRedCarPosFinishLane = crashPos - 180;
+        }
+        if (redCar.getY() == getRedCarPosFinishLane) {
             countCarFinishLane++;
             if (countCarFinishLane == 3) {
                 addCoins.set(true);
@@ -356,10 +498,9 @@ public class ThreeLaneRoad extends AppCompatActivity {
     //start cars ride
     private void startCarsRide(ImageView blueCar, ImageView redCar, AtomicBoolean isRedCarTransparent) {
         //blue car ride
-        int carSpeed = 60;
         if (blueCar.getY() >= blueCarStartPos && blueCar.getY() < crashPos) {
 
-            blueCar.setY(blueCar.getY() + carSpeed);
+            blueCar.setY(blueCar.getY() + carsSpeed);
         }
 
         //red car ride
@@ -369,7 +510,7 @@ public class ThreeLaneRoad extends AppCompatActivity {
                 redCar.setImageResource(R.drawable.red_car);
                 isRedCarTransparent.set(false);
             }
-            redCar.setY(redCar.getY() + carSpeed);
+            redCar.setY(redCar.getY() + carsSpeed);
         }
     }
 
@@ -377,7 +518,7 @@ public class ThreeLaneRoad extends AppCompatActivity {
     private void startCoinRide(ImageView coin, AtomicBoolean addCoins) {
 
         if (addCoins.get()) {
-            if (coin.getY() >= -240 && coin.getY() < coinCrashPos) {
+            if (coin.getY() >= coinStartPos && coin.getY() < coinCrashPos) {
                 //coin move
                 coin.setImageResource(R.drawable.coin);
                 coin.setY(coin.getY() + coinSpeed);
@@ -419,7 +560,7 @@ public class ThreeLaneRoad extends AppCompatActivity {
 
                 randNewLaneCoin.set(randNewLane());
                 coin.setX((float) (randNewLaneCoin.get() * getScreenWidth() / laneRoad) + 100);
-                coin.setY(-240);
+                coin.setY(coinStartPos);
             }
         }
     }
@@ -542,4 +683,14 @@ public class ThreeLaneRoad extends AppCompatActivity {
 
         countTimer.setText(timerLeftText);
     }
+
+    private void initSensor() {
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+
+//    public boolean isSensorExists(int sensorType) {
+//        return (sensorManager.getDefaultSensor(sensorType) != null);
+//    }
+
 }

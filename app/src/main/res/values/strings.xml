@@ -13,8 +13,11 @@
     <string name="ToolBarGameRestart">ToolBarGameRestart</string>
     <string name="ToolBarGamePause">CountDownTimer</string>
     <string name="CountdownTimer">3</string>
-    <string name="Easy">Easy</string>
-    <string name="medium">medium</string>
-    <string name="Hard">Hard</string>
+    <string name="EasyGameMode">Easy</string>
+    <string name="MediumGameMode">Medium</string>
+    <string name="HardGameMode">Hard</string>
+    <string name="SensorsMode">Sensors Mode</string>
+    <string name="SensorsSpeedMode">Sensors Speed Mode</string>
+    <string name="ShowRecords">Show Records</string>
 
 </resources>

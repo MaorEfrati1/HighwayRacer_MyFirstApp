@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import java.util.Locale;
@@ -18,13 +19,15 @@ public class GameOverScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over_screen);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         //Toolbar
         ImageView menu = findViewById(R.id.Main_Textview_ToolBarExitToMenu);
         ImageView gameRestart = findViewById(R.id.Main_Textview_ToolBarGameRestart);
         ImageView gamePause = findViewById(R.id.Main_Textview_ToolBarGamePause);
 
         //Game over sound
-        final MediaPlayer gameOverSound = MediaPlayer.create(this,R.raw.game_over);
+        final MediaPlayer gameOverSound = MediaPlayer.create(this, R.raw.game_over);
         gameOverSound.start();
 
         //Language support
