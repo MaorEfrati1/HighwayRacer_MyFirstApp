@@ -1,10 +1,9 @@
-package com.example.hw1;
+package com.example.hw1.Model;
 
-import static com.example.hw1.MainActivity.getGameMode;
-import static com.example.hw1.MainActivity.getIsSensorMode;
-import static com.example.hw1.MainActivity.getIsSensorSpeedMode;
-
-import androidx.appcompat.app.AppCompatActivity;
+import static android.hardware.Sensor.TYPE_ACCELEROMETER;
+import static com.example.hw1.Model.MainActivity.getCarColor;
+import static com.example.hw1.Model.MainActivity.getIsSensorMode;
+import static com.example.hw1.Model.MainActivity.getIsSensorSpeedMode;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -24,22 +23,34 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.hw1.R;
+import com.example.hw1.Utils.DataManager;
+import com.example.hw1.Utils.MSP;
+import com.google.gson.Gson;
+
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class FiveLaneRoad extends AppCompatActivity {
+public class ThreeLaneRoad extends AppCompatActivity {
 
     //game setting
-    private final int laneRoad = 5;
-    private final int screenWidth = 216;
+    private final int laneRoad = 3;
+    private final int screenWidth = 360;
     private Timer timer;
     private static final int DELAY = 70;
     private boolean onPause = false;
     private boolean ClickArrows = false;
-    private final int mode = getGameMode();
+    public static Record record = new Record();
+    public DataManager dataManager = new DataManager();
+
+
+    //car color
+    private final String getCarColor = getCarColor();
 
     //hearts
     private int heartCount = 3;
@@ -52,47 +63,41 @@ public class FiveLaneRoad extends AppCompatActivity {
 
     private int coinsCounter = 0;
     private AtomicBoolean addCoins;
-    private int countCarFinishLane = 0;
-    private int coinCrashPos = 1440;
+    private int coinCrashPos = 1320;
     private int coinSpeed = 60;
-    private int coinStartPos = -240;
-    private float coinGetYAfterPause;
     private float coinGetXAfterPause;
+    private float coinGetYAfterPause;
     private boolean coinAddAfterPause;
+    private int coinStartPos = -240;
 
-    //CountDownTimer
+
+    //CountDown Timer
     private CountDownTimer countDownTimer;
     private long timeLeft = 4000;
     private boolean timerRunning;
     private TextView countTimer;
 
+
     //cars setting
     private ImageView raceCar;
-    private ImageView blueCar;
     private ImageView redCar;
-    private ImageView yellowCar;
+    private ImageView blueCar;
 
+    private int carsSpeed = 60;
     private float redCarGetYAfterPause;
     private float blueCarGetYAfterPause;
-    private float yellowCarGetYAfterPause;
-
+    private int countCarFinishLane = 0;
+    private int raceCarPos = 1;
+    private int crashPos = 1200;
+    private int redCarStartPos = -240;
+    private int blueCarStartPos = -120;
     private float redCarGetXAfterPause;
     private float blueCarGetXAfterPause;
-    private float yellowCarGetXAfterPause;
-
     private float raceCarGetXAfterPause;
 
-    private int raceCarPos = 2;
-    private int carsSpeed = 60;
-    private int yellowCarSpeed = 90;
-    private int crashPos = 1380;
-    private int yellowCrashPos = 1440;
-    private int blueCarStartPos = 0;
-    private int redCarStartPos = -120;
-    private int yellowCarStartPos = -180;
 
     //Sensor Mode
-    private final boolean isSensorMode = getIsSensorMode();
+    private boolean isSensorMode = getIsSensorMode();
     private SensorManager sensorManager;
     private Sensor sensor;
     private boolean sensorMovement = false;
@@ -100,7 +105,12 @@ public class FiveLaneRoad extends AppCompatActivity {
 
     //Sensor Speed Mode
     private final boolean isSensorSpeedMode = getIsSensorSpeedMode();
-    private boolean sensorSpeed = true;
+
+    //Get Location
+    private double longitude = 0;
+    private double latitude = 0;
+    public static final String LATITUDE = "LATITUDE";
+    public static final String LONGITUDE = "LONGITUDE";
 
 
     private final SensorEventListener accSensorEventListener = new SensorEventListener() {
@@ -110,66 +120,54 @@ public class FiveLaneRoad extends AppCompatActivity {
             float y = event.values[1];
 
             if (Math.abs(x) > Math.abs(y)) {
-
                 if (sensorMovement) {
+
                     //Tilt Right
                     if (x < 0) {
-                        if (raceCar.getX() <= screenWidth * 3) {
+                        if (raceCar.getX() <= screenWidth) {
                             raceCar.setX(raceCar.getX() + screenWidth);
                         }
                     }
                     //Tilt Left
                     if (x > 0) {
-                        if (raceCar.getX() >= 216) {
+                        if (raceCar.getX() >= screenWidth) {
                             raceCar.setX(raceCar.getX() - screenWidth);
                         }
                     }
                 }
             } else {
                 if (isSensorSpeedMode) {
-                    if (sensorSpeed) {
 
-                        //Tilt Up
-                        if (y < -3) {
+                    //Tilt Up
+                    if (y < -3) {
+                        carsSpeed = 90;
+                        coinSpeed = 90;
 
-                            carsSpeed = 90;
-                            yellowCarSpeed = 120;
-                            coinSpeed = 90;
+                        crashPos = 1260;
+                        blueCarStartPos = 0;
+                        coinCrashPos = 1350;
 
-                            crashPos = 1350;
-                            yellowCrashPos = 1440;
-                            coinCrashPos = 1440;
-                            blueCarStartPos = 0;
-                            redCarStartPos = -180;
-                            yellowCarStartPos = -240;
-                            coinStartPos = -180;
+                        redCarStartPos = -180;
+                        coinStartPos = -180;
 
+                        if (checkUpDown) {
+                            checkUpDown = false;
+                            redCar.setY(redCarStartPos);
+                            blueCar.setY(blueCarStartPos);
 
-                            if (checkUpDown) {
-                                checkUpDown = false;
-
-                                redCar.setY(redCarStartPos);
-                                blueCar.setY(blueCarStartPos);
-                                yellowCar.setY(yellowCarStartPos);
-
-                                coin.setY(coinStartPos);
-                            }
+                            coin.setY(coinStartPos);
                         }
-                        //Tilt Down
-                        if (y > 3) {
-                            carsSpeed = 30;
-                            coinSpeed = 30;
+                    }
+                    //Tilt Down
+                    if (y > 3) {
+                        carsSpeed = 30;
+                        coinSpeed = 30;
 
-                            yellowCarSpeed = 60;
-                            crashPos = 1380;
-                            yellowCrashPos = 1440;
-                            blueCarStartPos = 0;
-                            redCarStartPos = -120;
-                            yellowCarStartPos = -180;
+                        crashPos = 1200;
+                        blueCarStartPos = 0;
+                        redCarStartPos = -120;
 
-                            checkUpDown = true;
-
-                        }
+                        checkUpDown = true;
                     }
                 }
             }
@@ -200,16 +198,28 @@ public class FiveLaneRoad extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_five_lane_road);
+        setContentView(R.layout.activity_three_lane_road);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        //Get location
+        Intent intent = getIntent();
+        Bundle bundle = intent.getBundleExtra("bundle");
+        latitude = bundle.getDouble(LATITUDE);
+        longitude = bundle.getDouble(LONGITUDE);
 
         //Toolbar
         ImageView menu = findViewById(R.id.Main_Textview_ToolBarExitToMenu);
         ImageView gameRestart = findViewById(R.id.Main_Textview_ToolBarGameRestart);
         ImageView gamePause = findViewById(R.id.Main_Textview_ToolBarGamePause);
 
-        //score
+        //KM
         TextView Km = findViewById(R.id.textView_KM);
+
+        //coin
+        TextView coins = findViewById(R.id.textView_Coin);
+        coin = findViewById(R.id.ImageView_Gameplay_coin);
+        coin.setImageResource(android.R.color.transparent);
+        coin.setX(coin.getX() + 100);
 
         //hearts
         ImageView heart3 = findViewById(R.id.ImageView_Abilities_Heart3);
@@ -219,10 +229,22 @@ public class FiveLaneRoad extends AppCompatActivity {
         //Obstacles
         blueCar = findViewById(R.id.ImageView_Gameplay_BlueCar);
         redCar = findViewById(R.id.ImageView_Gameplay_RedCar);
-        yellowCar = findViewById(R.id.ImageView_Gameplay_yellowCar);
 
         //Race car
         raceCar = findViewById(R.id.ImageView_RaceCarMovement_RaceCar);
+
+        //get Car Color
+        switch (getCarColor) {
+            case "Red":
+                raceCar.setImageResource(R.drawable.red_race_car);
+                break;
+            case "White":
+                raceCar.setImageResource(R.drawable.white_race_car);
+                break;
+            case "Yellow":
+                raceCar.setImageResource(R.drawable.yellow_race_car);
+                break;
+        }
 
         //Right arrow button
         ImageView Right_Arrow = findViewById(R.id.ImageButton_RightLeftBtn_RightArrow);
@@ -232,6 +254,7 @@ public class FiveLaneRoad extends AppCompatActivity {
 
         //Timer
         countTimer = findViewById(R.id.textView_CountDownTimer);
+        countTimer.setX(countTimer.getX() - 80);
 
         //Load "start engine" sound
         final MediaPlayer carStartEngine = MediaPlayer.create(this, R.raw.car_start_engine);
@@ -239,46 +262,26 @@ public class FiveLaneRoad extends AppCompatActivity {
         //count down timer
         startStopTimer(carStartEngine);
 
-        //coin
-        TextView coins = findViewById(R.id.textView_Coin);
-        coin = findViewById(R.id.ImageView_Gameplay_coin);
-        coin.setImageResource(android.R.color.transparent);
-        coin.setX(coin.getX());
-
-        //add coin set text
-        addCoin(redCar, coins);
-
-        //KM set text
+        //KM text
         KmCount(Km);
 
-        //SensorsMode
-        if (isSensorMode) {
-            Left_Arrow.setImageResource(android.R.color.transparent);
-            Right_Arrow.setImageResource(android.R.color.transparent);
-            //if (isSensorExists(sensor.TYPE_ACCELEROMETER)){
-            initSensor();
-            //}
-        }
-
-
-        //setup for hard mode
-        if (mode == 3) {
-            sensorSpeed = false;
-            carsSpeed = 90;
-            yellowCarSpeed = 120;
-            coinSpeed = 90;
-
-            crashPos = 1350;
-            yellowCrashPos = 1440;
-            coinCrashPos = 1440;
-
-            redCarStartPos = -180;
-            yellowCarStartPos = -240;
-            coinStartPos = -180;
-        }
+        //add coin text
+        addCoin(redCar, coins);
 
         //Exit To Menu
         menu.setOnClickListener(v -> goToMainScreen());
+
+        //SensorsMode
+        if (isSensorMode) {
+            initSensor();
+            if (isSensorExists(TYPE_ACCELEROMETER)) {
+                Left_Arrow.setImageResource(android.R.color.transparent);
+                Right_Arrow.setImageResource(android.R.color.transparent);
+            } else {
+                isSensorMode = false;
+                toast("Sensor node isn't available in this phone");
+            }
+        }
 
         //restart
         gameRestart.setOnClickListener(v -> {
@@ -294,6 +297,7 @@ public class FiveLaneRoad extends AppCompatActivity {
                 timerReset(carStartEngine);
 
                 timer.cancel();
+                onPause = false;
                 heartCount = 3;
                 KmCount = 0;
 
@@ -303,7 +307,7 @@ public class FiveLaneRoad extends AppCompatActivity {
                 coinsCounter = 0;
                 addCoins.set(false);
                 countCarFinishLane = 0;
-                coin.setX(((float) 2 * getScreenWidth() / laneRoad));
+                coin.setX(((float) 1 * getScreenWidth() / laneRoad));
 
                 heart1.setImageResource(R.drawable.heart);
                 heart2.setImageResource(R.drawable.heart);
@@ -311,19 +315,16 @@ public class FiveLaneRoad extends AppCompatActivity {
 
                 redCar.setImageResource(R.drawable.red_car);
                 blueCar.setImageResource(R.drawable.blue_car);
-                yellowCar.setImageResource(R.drawable.yellow_race_car);
 
                 redCar.setY(redCarStartPos);
                 blueCar.setY(blueCarStartPos);
-                yellowCar.setY(yellowCarStartPos);
 
                 redCar.setX(0);
-                blueCar.setX(((float) 1 * getScreenWidth() / laneRoad));
-                yellowCar.setX(((float) 3 * getScreenWidth() / laneRoad));
+                blueCar.setX(((float) 2 * getScreenWidth() / laneRoad));
 
-                raceCar.setX(((float) 2 * getScreenWidth() / laneRoad));
+                raceCar.setX(((float) getScreenWidth() / laneRoad));
 
-                gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, yellowCar, Km, coin, coins);
+                gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, Km, coin, coins);
             }
         });
 
@@ -345,35 +346,37 @@ public class FiveLaneRoad extends AppCompatActivity {
 
                     redCarGetXAfterPause = redCar.getX();
                     blueCarGetXAfterPause = blueCar.getX();
-                    yellowCarGetXAfterPause = yellowCar.getX();
                     raceCarGetXAfterPause = raceCar.getX();
                     coinGetXAfterPause = coin.getX();
 
+
                     redCarGetYAfterPause = redCar.getY();
                     blueCarGetYAfterPause = blueCar.getY();
-                    yellowCarGetYAfterPause = yellowCar.getY();
                     coinGetYAfterPause = coin.getY();
 
                     coinAddAfterPause = addCoins.get();
 
-                    gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, yellowCar, Km, coin, coins);
+                    gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, Km, coin, coins);
+
                 }
             }
         });
 
 
         //GamePlay Thread
-        gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, yellowCar, Km, coin, coins);
+        gamePlay(blueCar, raceCar, heart1, heart2, heart3, redCar, Km, coin, coins);
 
         //Language support
         String language = Locale.getDefault().getDisplayLanguage();
         if (language.equals("English")) {
             menu.setRotation(360);
-            redCar.setX((float) (-4 * getScreenWidth() / laneRoad));
-            blueCar.setX((float) (-2 * getScreenWidth() / laneRoad));
-            yellowCar.setX((float) (2 * getScreenWidth() / laneRoad));
-            Left_Arrow.setX((float) (3.5 * getScreenWidth() / laneRoad));
-            Right_Arrow.setX((float) (-3.5 * getScreenWidth() / laneRoad));
+            countTimer.setX(countTimer.getX() + 160);
+            redCar.setX((float) (-2 * getScreenWidth() / laneRoad));
+            blueCar.setX((float) (2 * getScreenWidth() / laneRoad));
+            Left_Arrow.setX((float) (2 * getScreenWidth() / laneRoad));
+            Right_Arrow.setX((float) (-2 * getScreenWidth() / laneRoad));
+
+
         }
 
         Right_Arrow.setOnClickListener(v -> {
@@ -384,12 +387,6 @@ public class FiveLaneRoad extends AppCompatActivity {
                 } else if (raceCarPos == 2) {
                     raceCar.setX(((float) getScreenWidth() / laneRoad));
                     raceCarPos = 1;
-                } else if (raceCarPos == 3) {
-                    raceCar.setX((2 * (float) getScreenWidth() / laneRoad));
-                    raceCarPos = 2;
-                } else if (raceCarPos == 4) {
-                    raceCar.setX((3 * (float) getScreenWidth() / laneRoad));
-                    raceCarPos = 3;
                 }
             }
         });
@@ -403,38 +400,31 @@ public class FiveLaneRoad extends AppCompatActivity {
                 } else if (raceCarPos == 1) {
                     raceCar.setX((float) (2 * getScreenWidth() / laneRoad));
                     raceCarPos = 2;
-                } else if (raceCarPos == 2) {
-                    raceCar.setX((float) (3 * getScreenWidth() / laneRoad));
-                    raceCarPos = 3;
-                } else if (raceCarPos == 3) {
-                    raceCar.setX((float) (4 * getScreenWidth() / laneRoad));
-                    raceCarPos = 4;
                 }
             }
         });
     }
 
 
-    private void gamePlay(ImageView blueCar, ImageView raceCar, ImageView heart1, ImageView heart2, ImageView heart3, ImageView redCar, ImageView yellowCar, TextView Km, ImageView coin, TextView coins) {
-        AtomicBoolean isRedCarTransparent = new AtomicBoolean(false);
-        AtomicBoolean isYellowCarTransparent = new AtomicBoolean(false);
+    private void gamePlay(ImageView blueCar, ImageView raceCar, ImageView heart1, ImageView heart2, ImageView heart3, ImageView redCar, TextView Km, ImageView coin, TextView coins) {
+        timer = new Timer();
 
         //coin
         addCoins = new AtomicBoolean();
         AtomicInteger randNewLaneCoin = new AtomicInteger();
 
-        //cars lane random
         AtomicInteger randNewLaneBlueCar = new AtomicInteger();
         AtomicInteger randNewLaneRedCar = new AtomicInteger();
-        AtomicInteger randNewLaneYellowCar = new AtomicInteger();
+        AtomicBoolean isTransparent = new AtomicBoolean(false);
 
-        carPosInit(blueCar, raceCar, redCar, yellowCar, randNewLaneRedCar, randNewLaneBlueCar, randNewLaneYellowCar, coin, randNewLaneCoin);
-        timer = new Timer();
+        ItemsPosInit(blueCar, raceCar, redCar, coin, randNewLaneRedCar, randNewLaneBlueCar, randNewLaneCoin);
+
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 runOnUiThread(() -> {
                     if (!onPause) {
+
                         //activate arrows
                         if (isSensorMode) {
                             ClickArrows = false;
@@ -443,28 +433,24 @@ public class FiveLaneRoad extends AppCompatActivity {
                         } else {
                             ClickArrows = true;
                         }
+
                         //timer reset
                         countTimer.setText("");
                         timeLeft = 0;
 
                         //start cars ride
-                        startCarsRide(blueCar, redCar, yellowCar, isRedCarTransparent, isYellowCarTransparent);
-
-                        //blue car new ride + crashed?
-                        restartCarAndIsCrashed(randNewLaneBlueCar, blueCar, raceCar, heart1, heart2, heart3, blueCarStartPos);
+                        startCarsRide(blueCar, redCar, isTransparent);
 
                         //red car new ride + crashed?
                         restartCarAndIsCrashed(randNewLaneRedCar, redCar, raceCar, heart1, heart2, heart3, redCarStartPos);
 
-                        //yellow car new ride + crashed?
-                        restartCarAndIsCrashed(randNewLaneYellowCar, yellowCar, raceCar, heart1, heart2, heart3, yellowCarStartPos);
-
-                        YellowCarInTheSameRoad(randNewLaneBlueCar, randNewLaneRedCar, randNewLaneYellowCar, yellowCar, isYellowCarTransparent, randNewLaneCoin);
+                        //blue car new ride + crashed?
+                        restartCarAndIsCrashed(randNewLaneBlueCar, blueCar, raceCar, heart1, heart2, heart3, blueCarStartPos);
 
                         //cars in the same road
-                        carInTheSameRoad(randNewLaneBlueCar, randNewLaneRedCar, randNewLaneYellowCar, blueCar, redCar, yellowCar, isRedCarTransparent, isYellowCarTransparent);
+                        carInTheSameRoad(randNewLaneBlueCar, randNewLaneRedCar, blueCar, redCar, isTransparent);
 
-                        //score
+                        //KM
                         KmCount(Km);
 
                         //add coin
@@ -477,7 +463,7 @@ public class FiveLaneRoad extends AppCompatActivity {
                         restartCoinAndIsEarned(randNewLaneCoin, coin, raceCar);
 
                         //coin in the same road of cars
-                        coinInTheSameRoad(randNewLaneBlueCar, randNewLaneRedCar, blueCar, redCar, randNewLaneCoin, coin, randNewLaneYellowCar, yellowCar);
+                        coinInTheSameRoad(randNewLaneBlueCar, randNewLaneRedCar, blueCar, redCar, randNewLaneCoin, coin);
                     }
                 });
             }
@@ -503,11 +489,7 @@ public class FiveLaneRoad extends AppCompatActivity {
         Km.setText("      Km: " + KmRes);
 
         if (heartCount != 0) {
-            if (mode == 3) {
-                KmCount += 0.006;
-            } else {
-                KmCount += 0.003;
-            }
+            KmCount += 0.003;
         }
     }
 
@@ -515,20 +497,21 @@ public class FiveLaneRoad extends AppCompatActivity {
     private void addCoin(ImageView redCar, TextView coins) {
         coins.setText("  Coins : " + coinsCounter);
         int getRedCarPosFinishLane = crashPos - 120;
-        if (mode == 3 || checkUpDown) {
+        if (checkUpDown) {
             getRedCarPosFinishLane = crashPos - 180;
         }
         if (redCar.getY() == getRedCarPosFinishLane) {
             countCarFinishLane++;
-            if (countCarFinishLane == 2) {
+            if (countCarFinishLane == 3) {
                 addCoins.set(true);
             }
         }
 
     }
 
-    private void carPosInit(ImageView blueCar, ImageView raceCar, ImageView redCar, ImageView yellowCar, AtomicInteger randNewLaneRedCar, AtomicInteger randNewLaneBlueCar, AtomicInteger randNewLaneYellowCar, ImageView coin, AtomicInteger randNewLaneCoin) {
+    private void ItemsPosInit(ImageView blueCar, ImageView raceCar, ImageView redCar, ImageView coin, AtomicInteger randNewLaneRedCar, AtomicInteger randNewLaneBlueCar, AtomicInteger randNewLaneCoin) {
         if (onPause) {
+
             //coin
             randNewLaneCoin.set((int) (coinGetXAfterPause / screenWidth));
             coin.setY(coinGetYAfterPause);
@@ -540,42 +523,26 @@ public class FiveLaneRoad extends AppCompatActivity {
             //cars
             randNewLaneRedCar.set((int) (redCarGetXAfterPause / screenWidth));
             randNewLaneBlueCar.set((int) (blueCarGetXAfterPause / screenWidth));
-            randNewLaneYellowCar.set((int) (yellowCarGetXAfterPause / screenWidth));
 
             redCar.setY(redCarGetYAfterPause);
             blueCar.setY(blueCarGetYAfterPause);
-            yellowCar.setY(yellowCarGetYAfterPause);
 
             onPause = false;
         } else {
-            //cars lane start
-            randNewLaneRedCar.set(0);
-            randNewLaneBlueCar.set(1);
-            randNewLaneYellowCar.set(3);
-
             //coin lane start
-            randNewLaneCoin.set(4);
-        }
-    }
+            randNewLaneCoin.set(1);
 
-    //yellow car in the same road of another cars or coin
-    private void YellowCarInTheSameRoad(AtomicInteger randNewLaneBlueCar, AtomicInteger randNewLaneRedCar, AtomicInteger randNewLaneYellowCar, ImageView yellowCar, AtomicBoolean isYellowCarTransparent, AtomicInteger randNewLaneCoin) {
-        if (yellowCar.getY() <= 500) {
-            if ((randNewLaneBlueCar.get() == randNewLaneYellowCar.get() || randNewLaneRedCar.get() == randNewLaneYellowCar.get() || randNewLaneCoin.get() == randNewLaneYellowCar.get())) {
-                yellowCar.setImageResource(android.R.color.transparent);
-                isYellowCarTransparent.set(true);
-
-                randNewLaneYellowCar.set(randNewLane());
-                yellowCar.setX((float) (randNewLaneYellowCar.get() * getScreenWidth() / laneRoad));
-                yellowCar.setY(-90);
-            }
+            //cars lane start
+            randNewLaneBlueCar.set(2);
+            randNewLaneRedCar.set(0);
         }
     }
 
     //start cars ride
-    private void startCarsRide(ImageView blueCar, ImageView redCar, ImageView yellowCar, AtomicBoolean isRedCarTransparent, AtomicBoolean isYellowCarTransparent) {
+    private void startCarsRide(ImageView blueCar, ImageView redCar, AtomicBoolean isRedCarTransparent) {
         //blue car ride
         if (blueCar.getY() >= blueCarStartPos && blueCar.getY() < crashPos) {
+
             blueCar.setY(blueCar.getY() + carsSpeed);
         }
 
@@ -588,21 +555,11 @@ public class FiveLaneRoad extends AppCompatActivity {
             }
             redCar.setY(redCar.getY() + carsSpeed);
         }
-
-        //yellow car ride
-        if (yellowCar.getY() >= yellowCarStartPos && yellowCar.getY() < yellowCrashPos) {
-            if (isYellowCarTransparent.get()) {
-                yellowCar.setY(yellowCarStartPos);
-                yellowCar.setImageResource(R.drawable.yellow_race_car);
-                isYellowCarTransparent.set(false);
-            }
-            yellowCar.setY(yellowCar.getY() + yellowCarSpeed);
-        }
-
     }
 
     //start coin ride
     private void startCoinRide(ImageView coin, AtomicBoolean addCoins) {
+
         if (addCoins.get()) {
             if (coin.getY() >= coinStartPos && coin.getY() < coinCrashPos) {
                 //coin move
@@ -612,9 +569,9 @@ public class FiveLaneRoad extends AppCompatActivity {
         }
     }
 
-
     //restart coin  + IsEarned?
     private void restartCoinAndIsEarned(AtomicInteger randNewLaneCoin, ImageView coin, ImageView raceCar) {
+
         if (coin.getY() == coinCrashPos) {
             int raceCarPosTemp = (int) (raceCar.getX() / screenWidth);
 
@@ -628,79 +585,54 @@ public class FiveLaneRoad extends AppCompatActivity {
 
             addCoins.set(false);
             countCarFinishLane = 0;
-            //  coin.setImageResource(android.R.color.transparent);
+            coin.setImageResource(android.R.color.transparent);
 
 
             //coin new ride
             randNewLaneCoin.set(randNewLane());
-            coin.setX((float) (randNewLaneCoin.get() * getScreenWidth() / laneRoad));
-            coin.setY(coinStartPos);
+            coin.setX((float) (randNewLaneCoin.get() * getScreenWidth() / laneRoad) + 100);
+            coin.setY(-120);
         }
     }
 
     //coin in the same road
-    private void coinInTheSameRoad(AtomicInteger randNewLaneBlueCar, AtomicInteger randNewLaneRedCar, ImageView blueCar, ImageView redCar, AtomicInteger randNewLaneCoin, ImageView coin, AtomicInteger randNewLaneYellowCar, ImageView yellowCar) {
-        if (coin.getY() <= 500) {
-            if ((randNewLaneBlueCar.get() == randNewLaneCoin.get() || randNewLaneRedCar.get() == randNewLaneCoin.get() || randNewLaneYellowCar.get() == randNewLaneCoin.get()) && (coin.getY() >= -240 && coin.getY() <= 300) && ((blueCar.getY() >= -240 && blueCar.getY() <= 300) || (redCar.getY() >= -240 && redCar.getY() <= 300) || (yellowCar.getY() >= -240 && yellowCar.getY() <= 300))) {
+    private void coinInTheSameRoad(AtomicInteger randNewLaneBlueCar, AtomicInteger randNewLaneRedCar, ImageView blueCar, ImageView redCar, AtomicInteger randNewLaneCoin, ImageView coin) {
+        if (coin.getY() <= 400) {
+            if ((randNewLaneBlueCar.get() == randNewLaneCoin.get() || randNewLaneRedCar.get() == randNewLaneCoin.get()) && (coin.getY() >= -240 && coin.getY() <= 300) && ((blueCar.getY() >= -240 && blueCar.getY() <= 300) || (redCar.getY() >= -240 && redCar.getY() <= 300))) {
                 coin.setImageResource(android.R.color.transparent);
 
                 randNewLaneCoin.set(randNewLane());
-                coin.setX((float) (randNewLaneCoin.get() * getScreenWidth() / laneRoad));
+                coin.setX((float) (randNewLaneCoin.get() * getScreenWidth() / laneRoad) + 100);
                 coin.setY(coinStartPos);
             }
         }
     }
 
     //restart car ride + IsCrashed?
-    private void restartCarAndIsCrashed(AtomicInteger randNewLaneCar, ImageView Car, ImageView raceCar, ImageView heart1, ImageView heart2, ImageView heart3, int carYPos) {
-
-        if (Car.getY() == crashPos || Car.getY() == yellowCrashPos) {
+    private void restartCarAndIsCrashed(AtomicInteger randNewLaneCar, ImageView car, ImageView raceCar, ImageView heart1, ImageView heart2, ImageView heart3, int carYStartPos) {
+        if (car.getY() == crashPos) {
 
             //crashed
-            int raceCarPos1 = (int) (raceCar.getX() / screenWidth);
-            if (randNewLaneCar.get() == raceCarPos1) {
+            int raceCarPosTemp = (int) (raceCar.getX() / screenWidth);
+            if (randNewLaneCar.get() == raceCarPosTemp) {
                 Crashed(timer, heart1, heart2, heart3);
             }
 
             //car new ride
             randNewLaneCar.set(randNewLane());
-            Car.setX((float) (randNewLaneCar.get() * getScreenWidth() / laneRoad));
-            Car.setY(carYPos);
+            car.setX((float) (randNewLaneCar.get() * getScreenWidth() / laneRoad));
+            car.setY(carYStartPos);
         }
     }
 
     //cars in the same road
-    private void carInTheSameRoad(AtomicInteger randNewLaneBlueCar, AtomicInteger randNewLaneRedCar, AtomicInteger randNewLaneYellowCar, ImageView blueCar, ImageView redCar, ImageView yellowCar, AtomicBoolean isRedCarTransparent, AtomicBoolean isYellowCarTransparent) {
+    private void carInTheSameRoad(AtomicInteger randNewLaneBlueCar, AtomicInteger randNewLaneRedCar, ImageView blueCar, ImageView redCar, AtomicBoolean isTransparent) {
+        if ((randNewLaneBlueCar.get() == randNewLaneRedCar.get()) && ((redCar.getY() >= -240 && redCar.getY() <= 300) && (blueCar.getY() >= -240 && blueCar.getY() <= 300))) {
 
-        //blue and red cars in the same lane
-        if (randNewLaneBlueCar.get() == randNewLaneRedCar.get() && (redCar.getY() >= -240 && redCar.getY() <= 300 && blueCar.getY() >= -240 && blueCar.getY() <= 300)) {
             redCar.setImageResource(android.R.color.transparent);
             randNewLaneRedCar.set(randNewLane());
             redCar.setX((float) (randNewLaneRedCar.get() * getScreenWidth() / laneRoad));
-            isRedCarTransparent.set(true);
-        }
-
-        //blue and yellow cars in the same lane
-        if (randNewLaneBlueCar.get() == randNewLaneYellowCar.get() && (yellowCar.getY() >= -240 && yellowCar.getY() <= 300 && blueCar.getY() >= -240 && blueCar.getY() <= 300)) {
-            yellowCar.setImageResource(android.R.color.transparent);
-            randNewLaneYellowCar.set(randNewLane());
-            yellowCar.setX((float) (randNewLaneYellowCar.get() * getScreenWidth() / laneRoad));
-            isYellowCarTransparent.set(true);
-        }
-
-        //red and yellow cars in the same lane
-        if (randNewLaneYellowCar.get() == randNewLaneRedCar.get() && (redCar.getY() >= -240 && redCar.getY() <= 250 && yellowCar.getY() >= -300 && yellowCar.getY() <= 300)) {
-            redCar.setImageResource(android.R.color.transparent);
-            yellowCar.setImageResource(android.R.color.transparent);
-
-            randNewLaneRedCar.set(randNewLane());
-            randNewLaneYellowCar.set(randNewLane());
-
-            redCar.setX((float) (randNewLaneRedCar.get() * getScreenWidth() / laneRoad));
-            yellowCar.setX((float) (randNewLaneYellowCar.get() * getScreenWidth() / laneRoad));
-
-            isRedCarTransparent.set(true);
-            isYellowCarTransparent.set(true);
+            isTransparent.set(true);
         }
     }
 
@@ -722,7 +654,18 @@ public class FiveLaneRoad extends AppCompatActivity {
             toast("You Crashed !");
             vibrate(500);
         } else {
+            //add Record
+            @SuppressLint("DefaultLocale") float temp = Float.parseFloat(String.format("%.1f", KmCount));
+            record.setKm(temp);
+            record.setCoins(coinsCounter);
+            record.setSensorModeActivate(isSensorMode);
+            record.setLat(latitude);
+            record.setLon(longitude);
+            record.setGameMode("Easy");
+            saveRecord();
+
             //game over
+            ThreeLaneRoad.this.finish();
             goToGameOverScreen();
             vibrate(1000);
             timer.cancel();
@@ -730,21 +673,36 @@ public class FiveLaneRoad extends AppCompatActivity {
         }
     }
 
+    public void saveRecord() {
+        String fromJSON = MSP.getInstance(this).getStrSP("dataManager", "");
+
+        if (fromJSON.isEmpty()) {
+            dataManager = new DataManager();
+        } else {
+            dataManager = new Gson().fromJson(fromJSON, DataManager.class);
+        }
+
+        dataManager.addRecord(record);
+
+        String jsonRecords = new Gson().toJson(dataManager);
+        MSP.getInstance(this).putStringSP("dataManager", jsonRecords);
+    }
+
     private static int getScreenWidth() {
         return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
 
     public void goToGameOverScreen() {
-        FiveLaneRoad.this.finish();
-        Intent intentLoadGameOverScreen = new Intent(com.example.hw1.FiveLaneRoad.this, GameOverScreen.class);
+        ThreeLaneRoad.this.finish();
+        Intent intentLoadGameOverScreen = new Intent(ThreeLaneRoad.this, GameOverScreen.class);
         startActivity(intentLoadGameOverScreen);
 
     }
 
     public void goToMainScreen() {
         timer.cancel();
-        com.example.hw1.FiveLaneRoad.this.finish();
-        Intent intentLoadMainScreen = new Intent(com.example.hw1.FiveLaneRoad.this, MainActivity.class);
+        ThreeLaneRoad.this.finish();
+        Intent intentLoadMainScreen = new Intent(ThreeLaneRoad.this, MainActivity.class);
         startActivity(intentLoadMainScreen);
     }
 
@@ -797,11 +755,11 @@ public class FiveLaneRoad extends AppCompatActivity {
 
     private void initSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensor = sensorManager.getDefaultSensor(TYPE_ACCELEROMETER);
     }
 
-//    public boolean isSensorExists(int sensorType) {
-//        return (sensorManager.getDefaultSensor(sensorType) != null);
-//    }
+    public boolean isSensorExists(int sensorType) {
+        return (sensorManager.getDefaultSensor(sensorType) != null);
+    }
 
 }

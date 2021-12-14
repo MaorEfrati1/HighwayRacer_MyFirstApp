@@ -5,6 +5,9 @@
     tools:ignore="LockedOrientationActivity">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -14,22 +17,28 @@
         android:roundIcon="@mipmap/launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HW1">
-        <activity
-            android:name=".ThreeLaneRoad"
 
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".FiveLaneRoad"
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCYQOEte9Q6jTVrtlayGdfc6y5lesUz2Gc" />
 
+        <activity
+            android:name=".Model.Records"
+            android:exported="false" />
+        <activity
+            android:name=".Model.ThreeLaneRoad"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".GameOverScreen"
+            android:name=".Model.FiveLaneRoad"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Model.GameOverScreen"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Model.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

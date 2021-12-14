@@ -16,8 +16,21 @@
     <string name="EasyGameMode">Easy</string>
     <string name="MediumGameMode">Medium</string>
     <string name="HardGameMode">Hard</string>
-    <string name="SensorsMode">Sensors Mode</string>
-    <string name="SensorsSpeedMode">Sensors Speed Mode</string>
+    <string name="Sensors">Car Sensor</string>
+    <string name="SensorsMode">Tilt Left &amp; Right</string>
+    <string name="SensorsSpeedMode">Tilt UP &amp; Down</string>
+    <string name="SensorsSpeedModeText">Speed Sensor</string>
     <string name="ShowRecords">Show Records</string>
+    <string name="ChooseCarColor">Choose Car Color</string>
+    <string name="km">KM</string>
+    <string name="coins">Coins</string>
+    <string name="game_mode">Game Mode</string>
+    <string name="sensor_mode_activate">Sensor Mode Activate</string>
+    <string name="RecordsInfo"><![CDATA[      Place       KM       Coins     difficulty    Sensor Activated]]></string>
+    <string name="RecordsInfoEmpty">"                      Play a game and add Records!"</string>
+
+
+
+
 
 </resources>

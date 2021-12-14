@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/five_lane_road_background"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".Model.MainActivity">
 
     <include layout="@layout/toolbar" />
 
@@ -151,7 +151,7 @@
             android:layout_weight="1"
             android:contentDescription="@string/RaceCar"
             android:rotation="-90"
-            app:srcCompat="@drawable/race_car" />
+            app:srcCompat="@drawable/red_race_car" />
 
         <View
             android:id="@+id/View_RaceCarMovement_View3"

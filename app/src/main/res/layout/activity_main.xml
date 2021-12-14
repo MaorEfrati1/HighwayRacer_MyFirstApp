@@ -1,50 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/menu_background"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".Model.MainActivity">
 
     <include layout="@layout/toolbar" />
 
+    <TextView
+        android:id="@+id/Main_Tv_header"
+        android:layout_width="201dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/black"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+
     <Button
         android:id="@+id/Main_Btn_EasyGameMode"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="@string/EasyGameMode" />
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:backgroundTint="@color/ic_launcher_background"
+        android:text="@string/EasyGameMode"
+        android:textSize="18sp" />
 
 
     <Button
         android:id="@+id/Main_Btn_MediumGameMode"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="@string/MediumGameMode" />
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:backgroundTint="@color/ic_launcher_background"
+        android:text="@string/MediumGameMode"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/Main_Btn_HardGameMode"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="@string/HardGameMode" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/Main_Btn_SensorsMode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/SensorsMode"
-       />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/Main_Btn_SensorsSpeedMode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/SensorsSpeedMode"
-        />
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:backgroundTint="@color/ic_launcher_background"
+        android:text="@string/HardGameMode"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/Main_Btn_ShowRecords"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="@string/ShowRecords" />
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:backgroundTint="@color/ic_launcher_background"
+        android:text="@string/ShowRecords"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/Main_Tv_Sensors"
+        android:layout_width="201dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:background="@color/black"
+        android:text="@string/Sensors"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/Main_Btn_SensorsMode"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:layoutDirection="ltr"
+        android:text="@string/SensorsMode"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/Main_Tv_SensorsSpeedMode"
+        android:layout_width="201dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:background="@color/black"
+        android:text="@string/SensorsSpeedModeText"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/Main_Btn_SensorsSpeedMode"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:layoutDirection="ltr"
+        android:text="@string/SensorsSpeedMode"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/Main_Tv_ChooseCarColor"
+        android:layout_width="201dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:background="@color/black"
+        android:text="@string/ChooseCarColor"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/Main_DropDown_TilChooseCarColor"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="4dp"
+        android:hint="@string/ChooseCarColor"
+        android:layoutDirection="ltr"
+        android:textColorHint="@color/white"
+        app:boxBackgroundColor="@color/ic_launcher_background"
+        app:endIconTint="@color/white">
+
+        <AutoCompleteTextView
+            android:id="@+id/Main_DropDown_ActChooseCarColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:inputType="none"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            tools:ignore="LabelFor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>

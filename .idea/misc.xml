@@ -6,8 +6,15 @@
         <entry key="..\:/Users/HW1/app/src/main/res/drawable/ic_launcher_background.xml" value="0.26510416666666664" />
         <entry key="..\:/Users/HW1/app/src/main/res/layout/activity_five_lane_road.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/HW1/app/src/main/res/layout/activity_game_over_screen.xml" value="0.2609375" />
-        <entry key="..\:/Users/HW1/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/activity_maps.xml" value="0.35260416666666666" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/activity_records.xml" value="0.25" />
         <entry key="..\:/Users/HW1/app/src/main/res/layout/activity_three_lane_road.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/fragment_home.xml" value="0.20520833333333333" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/fragment_list.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/fragment_map.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/list_record_item.xml" value="0.25" />
+        <entry key="..\:/Users/HW1/app/src/main/res/layout/nav_header_maps.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/HW1/app/src/main/res/layout/toolbar.xml" value="0.33" />
         <entry key="..\:/Users/HW1/app/src/main/res/menu/main.xml" value="0.2609375" />
         <entry key="..\:/Users/HW1/app/src/main/res/menu/menu.xml" value="0.2609375" />
@@ -15,6 +22,7 @@
         <entry key="..\:/Users/HW1/app/src/main/res/mipmap-anydpi-v26/highway_icon_launcher_round.xml" value="0.221875" />
         <entry key="..\:/Users/HW1/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.221875" />
         <entry key="..\:/Users/HW1/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3828125" />
+        <entry key="..\:/androidWorkspace/platforms/android-31/data/res/drawable/btn_dropdown.xml" value="0.3828125" />
       </map>
     </option>
   </component>
